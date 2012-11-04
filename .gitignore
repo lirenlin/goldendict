@@ -25,3 +25,5 @@ version.txt
 
 /goldendict.app/
 *.dmg
+*.swp
+*.deb
