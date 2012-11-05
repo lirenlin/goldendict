@@ -1,4 +1,5 @@
 #include "database.h"
+#include "config.hh"
 #include <QSqlTableModel>
 #include <QSqlQuery>
 #include <QDate>
@@ -12,7 +13,7 @@
 const QList<QString> dbInfo::columnNames = 
     QList<QString>() << "name" << "mean" << "date" << "dictName";
 const QString dbInfo::tableName = "word";
-const QString dbInfo::dbName = "lirenlin.db.sqlite";
+const QString dbInfo::dbName = "goldendict.db.sqlite";
 const QString dbInfo::dbType = "QSQLITE";
 const QString dbInfo::sqlSelect = 
     QString("SELECT * FROM %1").arg(dbInfo::tableName);
@@ -162,7 +163,8 @@ void DB::removeRow(QString name)
 bool dbInfo::createConnection()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase(dbInfo::dbType);
-    db.setDatabaseName(dbInfo::dbName);
+    db.setDatabaseName(Config::getDBFileName());
+    //db.setDatabaseName(dbInfo::dbName);
 
     //in the memory
     //db.setDatabaseName(":memory:");

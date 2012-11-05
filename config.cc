@@ -1400,6 +1400,11 @@ QString getUserQtCssFileName() throw( exError )
 {
   return getHomeDir().filePath( "qt-style.css" );
 }
+/// lirenlin
+QString getDBFileName() throw( exError )
+{
+  return getHomeDir().filePath( "goldendict.db.sqlite" );
+}
 
 QString getProgramDataDir() throw()
 {

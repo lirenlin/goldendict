@@ -464,6 +464,8 @@ QString getUserCssPrintFileName() throw( exError );
 
 /// Returns the user .css file name for the Qt interface customization.
 QString getUserQtCssFileName() throw( exError );
+/// lirenlin
+QString getDBFileName() throw( exError );
 
 /// Returns the program's data dir. Under Linux that would be something like
 /// /usr/share/apps/goldendict, under Windows C:/Program Files/GoldenDict.
