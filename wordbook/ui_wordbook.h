@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'wordbook.ui'
 **
-** Created: Sun Nov 4 11:39:16 2012
+** Created: Mon Nov 5 21:36:21 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -14,14 +14,13 @@
 #include <QtGui/QAction>
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
-#include <QtGui/QGridLayout>
-#include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
 #include <QtGui/QMainWindow>
 #include <QtGui/QStatusBar>
-#include <QtGui/QTableView>
 #include <QtGui/QToolBar>
+#include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
+#include "wordbookdock.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -32,17 +31,19 @@ public:
     QAction *actionImport;
     QAction *actionQuit;
     QWidget *centralWidget;
-    QHBoxLayout *horizontalLayout;
-    QTableView *tableView;
-    QGridLayout *gridLayout;
+    QVBoxLayout *verticalLayout;
     QStatusBar *statusBar;
     QToolBar *toolBar;
+    wordbookDock *dockWidget;
+    QWidget *dockWidgetContents;
+    QVBoxLayout *verticalLayout_2;
 
     void setupUi(QMainWindow *WordBook)
     {
         if (WordBook->objectName().isEmpty())
             WordBook->setObjectName(QString::fromUtf8("WordBook"));
-        WordBook->resize(663, 328);
+        WordBook->resize(749, 478);
+        WordBook->setContextMenuPolicy(Qt::DefaultContextMenu);
         actionExport = new QAction(WordBook);
         actionExport->setObjectName(QString::fromUtf8("actionExport"));
         actionImport = new QAction(WordBook);
@@ -53,21 +54,10 @@ public:
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         centralWidget->setMinimumSize(QSize(448, 293));
         centralWidget->setAutoFillBackground(true);
-        horizontalLayout = new QHBoxLayout(centralWidget);
-        horizontalLayout->setSpacing(6);
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        tableView = new QTableView(centralWidget);
-        tableView->setObjectName(QString::fromUtf8("tableView"));
-        tableView->setAlternatingRowColors(true);
-        tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-        gridLayout = new QGridLayout(tableView);
-        gridLayout->setSpacing(6);
-        gridLayout->setContentsMargins(11, 11, 11, 11);
-        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-
-        horizontalLayout->addWidget(tableView);
-
+        verticalLayout = new QVBoxLayout(centralWidget);
+        verticalLayout->setSpacing(6);
+        verticalLayout->setContentsMargins(11, 11, 11, 11);
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         WordBook->setCentralWidget(centralWidget);
         statusBar = new QStatusBar(WordBook);
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
@@ -76,6 +66,17 @@ public:
         toolBar->setObjectName(QString::fromUtf8("toolBar"));
         toolBar->setMovable(false);
         WordBook->addToolBar(Qt::TopToolBarArea, toolBar);
+        dockWidget = new wordbookDock(WordBook);
+        dockWidget->setObjectName(QString::fromUtf8("dockWidget"));
+        dockWidget->setMinimumSize(QSize(300, 124));
+        dockWidgetContents = new QWidget();
+        dockWidgetContents->setObjectName(QString::fromUtf8("dockWidgetContents"));
+        verticalLayout_2 = new QVBoxLayout(dockWidgetContents);
+        verticalLayout_2->setSpacing(6);
+        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        dockWidget->setWidget(dockWidgetContents);
+        WordBook->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dockWidget);
 
         retranslateUi(WordBook);
         QObject::connect(actionQuit, SIGNAL(triggered()), WordBook, SLOT(close()));
@@ -90,6 +91,7 @@ public:
         actionImport->setText(QApplication::translate("WordBook", "Import", 0, QApplication::UnicodeUTF8));
         actionQuit->setText(QApplication::translate("WordBook", "Quit", 0, QApplication::UnicodeUTF8));
         toolBar->setWindowTitle(QApplication::translate("WordBook", "toolBar", 0, QApplication::UnicodeUTF8));
+        dockWidget->setWindowTitle(QApplication::translate("WordBook", "wordbook", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

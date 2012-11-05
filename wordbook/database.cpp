@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QtGui/QApplication>
 #include <QSqlError>
+#include <QSqlRecord>
 
 const QList<QString> dbInfo::columnNames = 
     QList<QString>() << "name" << "mean" << "date" << "dictName";
@@ -19,7 +20,6 @@ const QString dbInfo::sqlSelect =
 DB::DB(QObject *parent):QObject(parent)
 {
     dbInfo::createConnection();
-    model = NULL;
 }
 
 DB::~DB()
@@ -27,23 +27,26 @@ DB::~DB()
     //delete model;
 }
 
-void DB::fillModel()
+void DB::fillModel(QSqlTableModel * const model)
 {
-    model = new QSqlTableModel(this);
+    //model = new QSqlTableModel(this);
     model->setTable(dbInfo::tableName);
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
     /// hide the last column
-    model->removeColumn(3);
+    //model->removeColumn(3);
+    //model->removeColumn(1);
     int index = 0;
     foreach(QString name, dbInfo::columnNames)
         model->setHeaderData(index++, Qt::Horizontal, name);
 }
 
-QSqlTableModel * DB::getModel()
+void DB::generateRecord(QSqlRecord &record, const QString &word)
 {
-    fillModel();
-    return model;
+    record.setValue("name", QVariant(word));
+    record.setNull("mean");
+    record.setValue("date", QVariant(QDate::currentDate().toString("dd.MM.yyyy")));
+    record.setNull("dictName");
 }
 
 bool DB::addRow(QString name, QString mean, QString dictName)
@@ -62,7 +65,7 @@ bool DB::addRow(QString name, QString mean, QString dictName)
     {
         QSqlQuery query;
         query.prepare("INSERT INTO word (name, mean, date, dictName)"
-                "VALUES (?, ?, ?, ?)");
+                      "VALUES (?, ?, ?, ?)");
         query.addBindValue(name);
         query.addBindValue(mean);
         query.addBindValue(QDate::currentDate().toString("dd.MM.yyyy"));
@@ -102,8 +105,8 @@ QString DB::dictName(QString name)
     QString cmd = QString("SELECT dictName FROM word WHERE name=\'%1\'").arg(name);
     QSqlQuery query;
     query.exec(cmd);
-    if (query.next()) 
-         dictName = query.value(0).toString();
+    if (query.next())
+        dictName = query.value(0).toString();
     return dictName;
 }
 
@@ -116,7 +119,7 @@ DB::status DB::ifExist(QString name, QString dictName )
     cmd += QString("dictName=\'%1\'").arg(dictName);
     query.prepare(cmd);
     if (!query.exec() || !query.first())
-       qDebug() << query.lastError().text();
+        qDebug() << query.lastError().text();
     else if(query.value(0) != 0) return SAME;
 
     cmd.clear();
@@ -125,7 +128,7 @@ DB::status DB::ifExist(QString name, QString dictName )
     cmd += QString(" WHERE name=\'%1\' ").arg(name);
     query.prepare(cmd);
     if (!query.exec() || !query.first())
-       qDebug() << query.lastError().text();
+        qDebug() << query.lastError().text();
     else
     {
         if(query.value(0) != 0) return EXIST;
@@ -145,15 +148,6 @@ bool DB::update(QString name, QString mean, QString dictName)
 
     return true;
 
-}
-
-void DB::removeRow(int row)
-{
-    if(model && (model->rowCount() > row))
-    {
-        model->removeRows(row, 1);
-        model->submitAll();
-    }
 }
 
 void DB::removeRow(QString name)

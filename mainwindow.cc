@@ -72,6 +72,14 @@ MainWindow::MainWindow( Config::Class & cfg_ ):
   applyQtStyleSheet( cfg.preferences.displayStyle );
 
   ui.setupUi( this );
+  /// new wordbookDock, lirenlin
+  wordbook = new wordbookDock(this);
+  connect(wordbook, SIGNAL(translate(QString)), this, SLOT(showTranslationFor(QString)));
+  connect(ui.actionShow, SIGNAL(triggered()),wordbook,SLOT(toggleVisibility()));
+  connect(ui.actionAdd_to_wordbook, SIGNAL(triggered()),this,SLOT(addToWordBook()));
+  QToolBar * WBToolBar = addToolBar( tr( "Add" ) );
+  WBToolBar->addAction( ui.actionAdd_to_wordbook );
+  tabifyDockWidget(wordbook, ui.searchPane);
 
   // use our own, cutsom statusbar
   setStatusBar(0);
@@ -557,6 +565,12 @@ MainWindow::MainWindow( Config::Class & cfg_ ):
 #ifdef Q_OS_WIN32
   gdAskMessage = RegisterWindowMessage( GD_MESSAGE_NAME );
 #endif
+}
+/// lirenlin
+void MainWindow::addToWordBook()
+{
+    if(!currentWord.isEmpty())
+        wordbook->addRecord(currentWord);
 }
 
 void MainWindow::ctrlTabPressed()
@@ -1562,6 +1576,8 @@ void MainWindow::translateInputChanged( QString const & newValue )
 void MainWindow::translateInputFinished( bool checkModifiers )
 {
   QString word = ui.translateLine->text();
+  /// lirenlin
+  currentWord = word;
 
   if ( word.size() )
   {

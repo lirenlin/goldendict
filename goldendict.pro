@@ -19,10 +19,12 @@ isEmpty( hasGit ) {
 
 # DEPENDPATH += . generators
 INCLUDEPATH += .
+INCLUDEPATH += ./wordbook
 QT += webkit
 QT += xml
 QT += network
 QT += phonon
+QT += sql
 CONFIG += exceptions \
     rtti \
     stl
@@ -202,8 +204,13 @@ HEADERS += folding.hh \
     aard.hh \
     mruqmenu.hh \
     dictinfo.hh \
-    zipsounds.hh
+    zipsounds.hh\
+    ./wordbook/database.h\
+    ./wordbook/wordbookdock.h\
+    ./wordbook/lineedit.h
+
 FORMS += groups.ui \
+    ./wordbook/wordbookdock.ui\
     dictgroupwidget.ui \
     mainwindow.ui \
     sources.ui \
@@ -218,6 +225,9 @@ FORMS += groups.ui \
     dictinfo.ui
 SOURCES += folding.cc \
     main.cc \
+    ./wordbook/wordbookdock.cpp\
+    ./wordbook/lineedit.cpp\
+    ./wordbook/database.cpp\
     dictionary.cc \
     config.cc \
     sources.cc \

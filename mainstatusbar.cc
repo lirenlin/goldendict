@@ -92,7 +92,9 @@ void MainStatusBar::refresh()
 
     adjustSize();
 
-    move( QPoint( 0, parentWidget()->height() - height() ) );
+    /// lirenlin
+    move( QPoint( parentWidget()->width() - width(), parentWidget()->height() - height() ) );
+    //move( QPoint( 0, parentWidget()->height() - height() ) );
 
     show();
     raise();

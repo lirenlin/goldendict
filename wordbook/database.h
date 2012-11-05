@@ -5,6 +5,7 @@
 #include <QList>
 
 class QSqlTableModel;
+class QSqlRecord;
 
 class DB: public QObject
 {
@@ -18,21 +19,18 @@ public:
         EXIST,
         NO
     };
-    QSqlTableModel * getModel();
+
+    void fillModel(QSqlTableModel *const model);
+    void generateRecord(QSqlRecord &record, const QString &word);
 
 public slots:
     bool addRow(QString name, QString mean, QString dictName);
     QString dictName(QString name);
     void removeRow(QString name);
-
-    void removeRow(int row);
     status ifExist(QString name, QString dictName = "");
 
 private:
     bool update(QString name, QString mean, QString dictName);
-    void fillModel();
-
-    QSqlTableModel *model;
 
 signals:
     void dbChanged();

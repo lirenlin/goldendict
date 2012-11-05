@@ -430,8 +430,10 @@ void ArticleRequest::bodyFinished()
                 +  Html::escape( dictId )
           + "/\"></span><span class=\"gdfromprefix\">"  +
           Html::escape( tr( "From " ).toUtf8().data() ) + "</span>" +
-          Html::escape( activeDict->getName().c_str() )
-           + "</div>";
+          Html::escape( activeDict->getName().c_str())+
+          /// I add this lirenlin
+          //" <input type=\"checkbox\" name=\"add\" value=\"true\">add" +
+           "</div>";
 
         head += "<span class=\"gdarticlebody gdlangfrom-";
         head += LangCoder::intToCode2( activeDict->getLangFrom() ).toAscii().data();

@@ -24,6 +24,7 @@
 #include "hotkeywrapper.hh"
 #include "mainstatusbar.hh"
 #include "mruqmenu.hh"
+#include "wordbookdock.h"
 
 #ifdef Q_WS_X11
 #include <fixx11h.h>
@@ -60,6 +61,10 @@ private:
   QSystemTrayIcon * trayIcon;
 
   Ui::MainWindow ui;
+  /// wordbook dock, lirenlin
+  wordbookDock * wordbook;
+  QString currentWord;
+  
 
   /// This widget is used as a title bar for the searchPane dock, and
   /// incorporates the next three objects inside
@@ -180,6 +185,8 @@ private:
 private slots:
 
   void hotKeyActivated( int );
+  /// lirenlin
+  void addToWordBook();
 
   /// If new release checks are on, santizies the next check time and starts
   /// the timer. Does nothing otherwise.

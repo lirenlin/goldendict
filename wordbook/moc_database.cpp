@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'database.h'
 **
-** Created: Sun Nov 4 11:39:20 2012
+** Created: Mon Nov 5 20:49:16 2012
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_DB[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -37,7 +37,8 @@ static const uint qt_meta_data_DB[] = {
       40,   21,   16,    3, 0x0a,
       85,   80,   72,    3, 0x0a,
      103,   80,    3,    3, 0x0a,
-     126,  122,    3,    3, 0x0a,
+     143,  129,  122,    3, 0x0a,
+     168,   80,  122,    3, 0x2a,
 
        0        // eod
 };
@@ -46,7 +47,8 @@ static const char qt_meta_stringdata_DB[] = {
     "DB\0\0dbChanged()\0bool\0name,mean,dictName\0"
     "addRow(QString,QString,QString)\0QString\0"
     "name\0dictName(QString)\0removeRow(QString)\0"
-    "row\0removeRow(int)\0"
+    "status\0name,dictName\0ifExist(QString,QString)\0"
+    "ifExist(QString)\0"
 };
 
 void DB::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -61,7 +63,10 @@ void DB::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_
         case 2: { QString _r = _t->dictName((*reinterpret_cast< QString(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< QString*>(_a[0]) = _r; }  break;
         case 3: _t->removeRow((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 4: _t->removeRow((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 4: { status _r = _t->ifExist((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])));
+            if (_a[0]) *reinterpret_cast< status*>(_a[0]) = _r; }  break;
+        case 5: { status _r = _t->ifExist((*reinterpret_cast< QString(*)>(_a[1])));
+            if (_a[0]) *reinterpret_cast< status*>(_a[0]) = _r; }  break;
         default: ;
         }
     }
@@ -99,9 +104,9 @@ int DB::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 5)
+        if (_id < 6)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 5;
+        _id -= 6;
     }
     return _id;
 }

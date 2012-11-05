@@ -61,7 +61,7 @@
      <x>0</x>
      <y>0</y>
      <width>653</width>
-     <height>18</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -120,10 +120,18 @@
     <addaction name="separator"/>
     <addaction name="clearHistory"/>
    </widget>
+   <widget class="QMenu" name="menuWordbook">
+    <property name="title">
+     <string>Wordbook</string>
+    </property>
+    <addaction name="actionShow"/>
+    <addaction name="actionAdd_to_wordbook"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
    <addaction name="menu_Edit"/>
    <addaction name="menuHistory"/>
+   <addaction name="menuWordbook"/>
    <addaction name="menu_Help"/>
   </widget>
   <widget class="QDockWidget" name="searchPane">
@@ -430,6 +438,25 @@
   <action name="importHistory">
    <property name="text">
     <string>&amp;Import</string>
+   </property>
+  </action>
+  <action name="actionShow">
+   <property name="text">
+    <string>Show</string>
+   </property>
+  </action>
+  <action name="actionHide">
+   <property name="text">
+    <string>Hide</string>
+   </property>
+  </action>
+  <action name="actionAdd_to_wordbook">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/addtab.png</normaloff>:/icons/addtab.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add to wordbook</string>
    </property>
   </action>
  </widget>
