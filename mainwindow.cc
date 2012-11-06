@@ -1206,6 +1206,8 @@ void MainWindow::titleChanged( ArticleView * view, QString const & title )
 {
   QString escaped = title;
   escaped.replace( "&", "&&" );
+  /// lirenlin
+  currentWord = escaped;
 
   ui.tabWidget->setTabText( ui.tabWidget->indexOf( view ), escaped );
   updateWindowTitle();
@@ -1577,7 +1579,7 @@ void MainWindow::translateInputFinished( bool checkModifiers )
 {
   QString word = ui.translateLine->text();
   /// lirenlin
-  currentWord = word;
+  ///currentWord = word;
 
   if ( word.size() )
   {
