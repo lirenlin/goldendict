@@ -16,6 +16,8 @@ wordbookDock::wordbookDock(QWidget *parent) :
     ui(new Ui::wordbookDock)
 {
     ui->setupUi(this);
+    /// no edit is possible
+    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     QHeaderView *header = ui->tableView->horizontalHeader();
     header->setResizeMode(QHeaderView::Stretch);
 
@@ -105,7 +107,7 @@ void wordbookDock::showSearchResult()
         return;
     }
 
-    qDebug() << "search with keyword " << text;
+    //qDebug() << "search with keyword " << text;
     QModelIndexList indexList = model->match(model->index(0,0), Qt::DisplayRole, text, -1, Qt::MatchContains);
 
     for(int row = 0; row < model->rowCount(); ++row )
@@ -114,23 +116,28 @@ void wordbookDock::showSearchResult()
     foreach(QModelIndex index, indexList)
     {
         ui->tableView->setRowHidden(index.row(), false);
-        qDebug() << index.row();
+        //qDebug() << index.row();
     }
 }
 
 void wordbookDock::selectionChanged(const QModelIndex &index)
 {
     //qDebug() << index.row();
+    static QString preWord = "";
     QModelIndex tmp = model->index(index.row(), 0);
     QString word = tmp.data(Qt::DisplayRole).toString();
 
-    emit translate(word);
+    if(word != preWord)
+    {
+        emit translate(word);
+        preWord = word;
+    }
 
 
 }
 void wordbookDock::toggleVisibility()
 {
-    qDebug() << "toggle visibility";
+    //qDebug() << "toggle visibility";
     if(isHidden()) show();
     else hide();
 }
