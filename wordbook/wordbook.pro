@@ -22,5 +22,5 @@ HEADERS  += database.h\
 INCLUDEPATH += ../build
 INCLUDEPATH += ..
 
-FORMS    += wordbook.ui \
+FORMS    +=  \
     wordbookdock.ui

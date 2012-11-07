@@ -1,5 +1,6 @@
-#include "database.h"
 #include "config.hh"
+#include "database.h"
+
 #include <QSqlTableModel>
 #include <QSqlQuery>
 #include <QDate>
@@ -11,7 +12,7 @@
 #include <QSqlRecord>
 
 const QList<QString> dbInfo::columnNames = 
-    QList<QString>() << "name" << "mean" << "date" << "dictName";
+    QList<QString>() << "ID" << "name" << "mean" << "date" << "dictName";
 const QString dbInfo::tableName = "word";
 const QString dbInfo::dbName = "goldendict.db.sqlite";
 const QString dbInfo::dbType = "QSQLITE";
@@ -46,7 +47,7 @@ void DB::generateRecord(QSqlRecord &record, const QString &word)
 {
     record.setValue("name", QVariant(word));
     record.setNull("mean");
-    record.setValue("date", QVariant(QDate::currentDate().toString("dd.MM.yyyy")));
+    record.setValue("date", QVariant(QDate::currentDate().toString("yyyy-MM-dd")));
     record.setNull("dictName");
 }
 
@@ -69,7 +70,7 @@ bool DB::addRow(QString name, QString mean, QString dictName)
                       "VALUES (?, ?, ?, ?)");
         query.addBindValue(name);
         query.addBindValue(mean);
-        query.addBindValue(QDate::currentDate().toString("dd.MM.yyyy"));
+        query.addBindValue(QDate::currentDate().toString("yyyy.MM.dd"));
         query.addBindValue(dictName);
         /*
         QString cmd = "INSERT INTO ";

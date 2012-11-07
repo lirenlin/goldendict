@@ -10,11 +10,20 @@
     <height>300</height>
    </rect>
   </property>
+  <property name="features">
+   <set>QDockWidget::AllDockWidgetFeatures</set>
+  </property>
+  <property name="allowedAreas">
+   <set>Qt::AllDockWidgetAreas</set>
+  </property>
   <property name="windowTitle">
    <string>WordBook</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="LineEdit" name="searchBox"/>
+    </item>
     <item>
      <widget class="QTableView" name="tableView">
       <property name="contextMenuPolicy">
@@ -28,9 +37,23 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="statusLine">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">lineedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

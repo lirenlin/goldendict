@@ -16,8 +16,13 @@ wordbookDock::wordbookDock(QWidget *parent) :
     ui(new Ui::wordbookDock)
 {
     ui->setupUi(this);
+    /// hide the title bar
+    QWidget * titleBar = new QWidget(this);
+    setTitleBarWidget(titleBar);
+
     /// no edit is possible
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //ui->tableView->setSortingEnabled(true);
     QHeaderView *header = ui->tableView->horizontalHeader();
     header->setResizeMode(QHeaderView::Stretch);
 
@@ -25,22 +30,37 @@ wordbookDock::wordbookDock(QWidget *parent) :
     model = new QSqlTableModel(this);
     dbInterface->fillModel(model);
     ui->tableView->setModel(model);
-    ui->tableView->setColumnHidden(1, true);
-    ui->tableView->setColumnHidden(3, true);
+    ui->tableView->setColumnHidden(0, true);
+    ui->tableView->setColumnHidden(2, true);
+    ui->tableView->setColumnHidden(4, true);
+    ui->tableView->sortByColumn(0, Qt::DescendingOrder);
     connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(displayMenu(QPoint)));
     connect(ui->tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectionChanged(QModelIndex)));
 
-    searchBox = new LineEdit(this);
+
+    ui->searchBox->setPlaceholderText("search...");
+    QCompleter *completer = new QCompleter(model, this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setCompletionColumn(1);
+    ui->searchBox->setCompleter(completer);
+    connect(ui->searchBox, SIGNAL(returnPressed()), this, SLOT(showSearchResult()));
+    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+F"), this);
+    connect(shortcut, SIGNAL(activated()), ui->searchBox, SLOT(setFocus()));
+
+    updateStatusLine();
+
+    /*
+    LineEdit * searchBox = new LineEdit(this);
     searchBox->setPlaceholderText("search...");
     QCompleter *completer = new QCompleter(model, this);
+    completer->setCompletionColumn(1);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     searchBox->setCompleter(completer);
     connect(searchBox, SIGNAL(returnPressed()), this, SLOT(showSearchResult()));
-
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+F"), this);
     connect(shortcut, SIGNAL(activated()), searchBox, SLOT(setFocus()));
-
     ui->verticalLayout->insertWidget(0,searchBox);
+    */
 
 
 
@@ -49,6 +69,11 @@ wordbookDock::wordbookDock(QWidget *parent) :
 wordbookDock::~wordbookDock()
 {
     delete ui;
+}
+
+void wordbookDock::updateStatusLine()
+{
+    ui->statusLine->setText(QString("Total %1 words.").arg(model->rowCount()));
 }
 
 void wordbookDock::displayMenu(const QPoint &pos)
@@ -91,6 +116,7 @@ void wordbookDock::displayMenu(const QPoint &pos)
 
                 model->removeRow(index.row() - i++ );
                 model->submitAll();
+                updateStatusLine();
             }
 
         }
@@ -99,7 +125,7 @@ void wordbookDock::displayMenu(const QPoint &pos)
 
 void wordbookDock::showSearchResult()
 {
-    QString text = searchBox->text();
+    QString text = ui->searchBox->text();
     if(text.isEmpty())
     {
         for(int row = 0; row < model->rowCount(); ++row )
@@ -108,7 +134,7 @@ void wordbookDock::showSearchResult()
     }
 
     //qDebug() << "search with keyword " << text;
-    QModelIndexList indexList = model->match(model->index(0,0), Qt::DisplayRole, text, -1, Qt::MatchContains);
+    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, text, -1, Qt::MatchContains);
 
     for(int row = 0; row < model->rowCount(); ++row )
         ui->tableView->setRowHidden(row, true);
@@ -124,7 +150,7 @@ void wordbookDock::selectionChanged(const QModelIndex &index)
 {
     //qDebug() << index.row();
     static QString preWord = "";
-    QModelIndex tmp = model->index(index.row(), 0);
+    QModelIndex tmp = model->index(index.row(), 1);
     QString word = tmp.data(Qt::DisplayRole).toString();
 
     if(word != preWord)
@@ -148,6 +174,7 @@ bool wordbookDock::addRecord(const QString &word)
     dbInterface->generateRecord(tmp, word);
     bool re1 = model->insertRecord(model->rowCount(), tmp);
     bool re2 = model->submitAll();
+    updateStatusLine();
     return (re1 && re2);
 
 }

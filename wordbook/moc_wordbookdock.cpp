@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'wordbookdock.h'
 **
-** Created: Mon Nov 5 21:36:23 2012
+** Created: Wed Nov 7 16:20:37 2012
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -37,8 +37,8 @@ static const uint qt_meta_data_wordbookDock[] = {
       38,   13,   13,   13, 0x08,
       61,   57,   13,   13, 0x08,
       87,   81,   13,   13, 0x08,
-     117,   13,   13,   13, 0x0a,
-     141,   14,  136,   13, 0x0a,
+     117,   13,   13,   13, 0x08,
+     136,   13,   13,   13, 0x0a,
 
        0        // eod
 };
@@ -47,7 +47,7 @@ static const char qt_meta_stringdata_wordbookDock[] = {
     "wordbookDock\0\0word\0translate(QString)\0"
     "showSearchResult()\0pos\0displayMenu(QPoint)\0"
     "index\0selectionChanged(QModelIndex)\0"
-    "toggleVisibility()\0bool\0addRecord(QString)\0"
+    "updateStatusLine()\0toggleVisibility()\0"
 };
 
 void wordbookDock::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -60,9 +60,8 @@ void wordbookDock::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 1: _t->showSearchResult(); break;
         case 2: _t->displayMenu((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
         case 3: _t->selectionChanged((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
-        case 4: _t->toggleVisibility(); break;
-        case 5: { bool _r = _t->addRecord((*reinterpret_cast< const QString(*)>(_a[1])));
-            if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = _r; }  break;
+        case 4: _t->updateStatusLine(); break;
+        case 5: _t->toggleVisibility(); break;
         default: ;
         }
     }

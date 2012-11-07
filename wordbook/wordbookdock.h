@@ -8,7 +8,6 @@ namespace Ui {
 class wordbookDock;
 }
 
-class LineEdit;
 class QSqlTableModel;
 class DB;
 class QModelIndex;
@@ -24,7 +23,6 @@ public:
 
 private:
     Ui::wordbookDock *ui;
-    LineEdit * searchBox;
     QSqlTableModel *model;
     DB *dbInterface;
     QString preWord;
@@ -36,6 +34,7 @@ private slots:
     void showSearchResult();
     void displayMenu(const QPoint &pos);
     void selectionChanged(const QModelIndex & index);
+    void updateStatusLine();
 
 public slots:
     void toggleVisibility();
