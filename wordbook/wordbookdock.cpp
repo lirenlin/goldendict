@@ -167,12 +167,23 @@ void wordbookDock::toggleVisibility()
     else hide();
 }
 
+bool wordbookDock::removeRecord(const QString &word)
+{
+    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchContains);
+    if(indexList.count() == 1)
+    {
+        model->removeRow(indexList.first().row());
+        model->submitAll();
+        return true;
+    }
+    return false;
+}
+
 bool wordbookDock::addRecord(const QString &word)
 {
     QSqlRecord tmp(model->record());
-    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchContains);
-    if(indexList.count() >= 1)
-        return false;
+    if(hasRecord(word))
+        return true;
 
     dbInterface->generateRecord(tmp, word);
     bool re1 = model->insertRecord(model->rowCount(), tmp);
@@ -180,5 +191,20 @@ bool wordbookDock::addRecord(const QString &word)
     updateStatusLine();
 
     return (re1 && re2);
+}
 
+const bool &wordbookDock::hasRecord(const QString &word) const
+{
+    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchContains);
+    if(indexList.count() >= 1)
+        return true;
+    else return false;
+}
+
+bool wordbookDock::hasRecord(const QString &word)
+{
+    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchContains);
+    if(indexList.count() >= 1)
+        return true;
+    else return false;
 }

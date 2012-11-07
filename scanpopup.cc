@@ -62,6 +62,8 @@ ScanPopup::ScanPopup( QWidget * parent,
 
   /// lirenlin
   connect( ui.addToWordBook, SIGNAL(clicked()), this, SLOT(addToWordBook()));
+  connect( definition, SIGNAL( titleChanged(  ArticleView *, QString const & ) ),
+           this, SLOT( titleChanged(  ArticleView *, QString const & ) ) );
 
   connect( this, SIGNAL(switchExpandMode() ),
            definition, SLOT( switchExpandOptionalParts() ) );
@@ -365,8 +367,10 @@ void ScanPopup::engagePopup( bool forcePopup, bool giveFocus )
 
   /// Too large strings make window expand which is probably not what user
   /// wants
-  ui.word->setText( elideInputWord() );
- 
+
+  /// lirenlin
+  //ui.word->setText( elideInputWord() );
+
   if ( !isVisible() )
   {
     // Need to show the window
@@ -484,418 +488,444 @@ void ScanPopup::initiateTranslation()
 
   history.addItem( History::Item( ui.groupList->getCurrentGroup(),
                                   inputWord.trimmed() ) );
+  /// lirenlin
+  if(wordbook->hasRecord(inputWord))
+      ui.addToWordBook->setChecked(true);
+  else
+      ui.addToWordBook->setChecked(false);
+
 //  history.save();
 }
 
 /// lirenlin
 void ScanPopup::addToWordBook()
 {
-  const_cast<wordbookDock *>(wordbook)->addRecord(inputWord);
+    if(ui.addToWordBook->isChecked())
+        const_cast<wordbookDock *>(wordbook)->addRecord(currentWord);
+    else if(!inputWord.isEmpty())
+        const_cast<wordbookDock *>(wordbook)->removeRecord(currentWord);
 }
+
+/// lirenlin
+void ScanPopup::titleChanged(ArticleView *, const QString &title)
+{
+  QString escaped = title;
+  escaped.replace( "&", "&&" );
+
+  currentWord = escaped.trimmed();
+  if(wordbook->hasRecord(currentWord))
+      ui.addToWordBook->setChecked(true);
+  else
+      ui.addToWordBook->setChecked(false);
+
+  ui.word->setText( currentWord );
+
+}
+
 
 vector< sptr< Dictionary::Class > > const & ScanPopup::getActiveDicts()
 {
-  int current = ui.groupList->currentIndex();
+    int current = ui.groupList->currentIndex();
 
-  if ( current < 0 || current >= (int) groups.size() )
-  {
-    // This shouldn't ever happen
-    return allDictionaries;
-  }
+    if ( current < 0 || current >= (int) groups.size() )
+    {
+        // This shouldn't ever happen
+        return allDictionaries;
+    }
 
-  Config::MutedDictionaries const * mutedDictionaries = dictionaryBar.getMutedDictionaries();
-  if ( !dictionaryBar.toggleViewAction()->isChecked() || mutedDictionaries == 0 )
-    return groups[ current ].dictionaries;
-  else
-  {
-    vector< sptr< Dictionary::Class > > const & activeDicts =
-      groups[ current ].dictionaries;
+    Config::MutedDictionaries const * mutedDictionaries = dictionaryBar.getMutedDictionaries();
+    if ( !dictionaryBar.toggleViewAction()->isChecked() || mutedDictionaries == 0 )
+        return groups[ current ].dictionaries;
+    else
+    {
+        vector< sptr< Dictionary::Class > > const & activeDicts =
+                groups[ current ].dictionaries;
 
-    // Populate the special dictionariesUnmuted array with only unmuted
-    // dictionaries
+        // Populate the special dictionariesUnmuted array with only unmuted
+        // dictionaries
 
-    dictionariesUnmuted.clear();
-    dictionariesUnmuted.reserve( activeDicts.size() );
+        dictionariesUnmuted.clear();
+        dictionariesUnmuted.reserve( activeDicts.size() );
 
-    for( unsigned x = 0; x < activeDicts.size(); ++x )
-      if ( !mutedDictionaries->contains(
-              QString::fromStdString( activeDicts[ x ]->getId() ) ) )
-        dictionariesUnmuted.push_back( activeDicts[ x ] );
+        for( unsigned x = 0; x < activeDicts.size(); ++x )
+            if ( !mutedDictionaries->contains(
+                     QString::fromStdString( activeDicts[ x ]->getId() ) ) )
+                dictionariesUnmuted.push_back( activeDicts[ x ] );
 
-    return dictionariesUnmuted;
-  }
+        return dictionariesUnmuted;
+    }
 }
 
 bool ScanPopup::eventFilter( QObject * watched, QEvent * event )
 {
-  if ( mouseIntercepted )
-  {
-    // We're only interested in our events
-
-    if ( event->type() == QEvent::MouseMove )
+    if ( mouseIntercepted )
     {
-//    DPRINTF( "Object: %s\n", watched->objectName().toUtf8().data() );
-      QMouseEvent * mouseEvent = ( QMouseEvent * ) event;
-      reactOnMouseMove( mouseEvent->globalPos() );
-    }
-  }
+        // We're only interested in our events
 
-  return QMainWindow::eventFilter( watched, event );
+        if ( event->type() == QEvent::MouseMove )
+        {
+            //    DPRINTF( "Object: %s\n", watched->objectName().toUtf8().data() );
+            QMouseEvent * mouseEvent = ( QMouseEvent * ) event;
+            reactOnMouseMove( mouseEvent->globalPos() );
+        }
+    }
+
+    return QMainWindow::eventFilter( watched, event );
 }
 
 void ScanPopup::reactOnMouseMove( QPoint const & p )
 {
-  if ( geometry().contains( p ) )
-  {
-//        DPRINTF( "got inside\n" );
-
-    hideTimer.stop();
-    mouseEnteredOnce = true;
-    uninterceptMouse();
-  }
-  else
-  {
-//        DPRINTF( "outside\n" );
-    // We're in grab mode and outside the window - calculate the
-    // distance from it. We might want to hide it.
-
-    // When the mouse has entered once, we don't allow it stayng outside,
-    // but we give a grace period for it to return.
-    int proximity = mouseEnteredOnce ? 0 : 60;
-
-    // Note: watched == this ensures no other child objects popping out are
-    // receiving this event, meaning there's basically nothing under the
-    // cursor.
-    if ( /*watched == this &&*/
-         !frameGeometry().adjusted( -proximity, -proximity, proximity, proximity ).
-         contains( p ) )
+    if ( geometry().contains( p ) )
     {
-      // We've way too far from the window -- hide the popup
+        //        DPRINTF( "got inside\n" );
 
-      // If the mouse never entered the popup, hide the window instantly --
-      // the user just moved the cursor further away from the window.
-
-      if ( !mouseEnteredOnce )
-        hideWindow();
-      else
-        hideTimer.start();
+        hideTimer.stop();
+        mouseEnteredOnce = true;
+        uninterceptMouse();
     }
-  }
+    else
+    {
+        //        DPRINTF( "outside\n" );
+        // We're in grab mode and outside the window - calculate the
+        // distance from it. We might want to hide it.
+
+        // When the mouse has entered once, we don't allow it stayng outside,
+        // but we give a grace period for it to return.
+        int proximity = mouseEnteredOnce ? 0 : 60;
+
+        // Note: watched == this ensures no other child objects popping out are
+        // receiving this event, meaning there's basically nothing under the
+        // cursor.
+        if ( /*watched == this &&*/
+             !frameGeometry().adjusted( -proximity, -proximity, proximity, proximity ).
+             contains( p ) )
+        {
+            // We've way too far from the window -- hide the popup
+
+            // If the mouse never entered the popup, hide the window instantly --
+            // the user just moved the cursor further away from the window.
+
+            if ( !mouseEnteredOnce )
+                hideWindow();
+            else
+                hideTimer.start();
+        }
+    }
 }
 
 void ScanPopup::mousePressEvent( QMouseEvent * ev )
 {
-  // With mouse grabs, the press can occur anywhere on the screen, which
-  // might mean hiding the window.
+    // With mouse grabs, the press can occur anywhere on the screen, which
+    // might mean hiding the window.
 
-  if ( !frameGeometry().contains( ev->globalPos() ) )
-  {
-    hideWindow();
+    if ( !frameGeometry().contains( ev->globalPos() ) )
+    {
+        hideWindow();
 
-    return;
-  }
+        return;
+    }
 
-  if ( ev->button() == Qt::LeftButton )
-  {
-    startPos = ev->globalPos();
-    setCursor( Qt::ClosedHandCursor );
-  }
+    if ( ev->button() == Qt::LeftButton )
+    {
+        startPos = ev->globalPos();
+        setCursor( Qt::ClosedHandCursor );
+    }
 
-  QMainWindow::mousePressEvent( ev );
+    QMainWindow::mousePressEvent( ev );
 }
 
 void ScanPopup::mouseMoveEvent( QMouseEvent * event )
 {
-  if ( event->buttons() && cursor().shape() == Qt::ClosedHandCursor )
-  {
-    QPoint newPos = event->globalPos();
+    if ( event->buttons() && cursor().shape() == Qt::ClosedHandCursor )
+    {
+        QPoint newPos = event->globalPos();
 
-    QPoint delta = newPos - startPos;
+        QPoint delta = newPos - startPos;
 
-    startPos = newPos;
+        startPos = newPos;
 
-    // Move the window
+        // Move the window
 
-    move( pos() + delta );
-  }
- 
-  QMainWindow::mouseMoveEvent( event );
+        move( pos() + delta );
+    }
+
+    QMainWindow::mouseMoveEvent( event );
 }
 
 void ScanPopup::mouseReleaseEvent( QMouseEvent * ev )
 {
-  unsetCursor();
-  QMainWindow::mouseReleaseEvent( ev );
+    unsetCursor();
+    QMainWindow::mouseReleaseEvent( ev );
 }
 
 void ScanPopup::leaveEvent( QEvent * event )
 {
-  QMainWindow::leaveEvent( event );
+    QMainWindow::leaveEvent( event );
 
-  // We hide the popup when the mouse leaves it.
+    // We hide the popup when the mouse leaves it.
 
-  // Combo-boxes seem to generate leave events for their parents when
-  // unfolded, so we check coordinates as well.
-  // If the dialog is pinned, we don't hide the popup.
-  // If some mouse buttons are pressed, we don't hide the popup either,
-  // since it indicates the move operation is underway.
-  if ( !ui.pinButton->isChecked() && !geometry().contains( QCursor::pos() ) &&
-       QApplication::mouseButtons() == Qt::NoButton )
-  {
-    hideTimer.start();
-  }
+    // Combo-boxes seem to generate leave events for their parents when
+    // unfolded, so we check coordinates as well.
+    // If the dialog is pinned, we don't hide the popup.
+    // If some mouse buttons are pressed, we don't hide the popup either,
+    // since it indicates the move operation is underway.
+    if ( !ui.pinButton->isChecked() && !geometry().contains( QCursor::pos() ) &&
+         QApplication::mouseButtons() == Qt::NoButton )
+    {
+        hideTimer.start();
+    }
 }
 
 void ScanPopup::enterEvent( QEvent * event )
 {
-  QMainWindow::enterEvent( event );
+    QMainWindow::enterEvent( event );
 
-  if ( mouseEnteredOnce )
-  {
-    // We "enter" first time via our event filter. This seems to evade some
-    // unexpected behavior under Windows.
+    if ( mouseEnteredOnce )
+    {
+        // We "enter" first time via our event filter. This seems to evade some
+        // unexpected behavior under Windows.
 
-    // If there was a countdown to hide the window, stop it.
-    hideTimer.stop();
-  }
+        // If there was a countdown to hide the window, stop it.
+        hideTimer.stop();
+    }
 }
 
 void ScanPopup::showEvent( QShowEvent * ev )
 {
-  QMainWindow::showEvent( ev );
-  
-  if ( groups.size() <= 1 ) // Only the default group? Hide then.
-    ui.groupList->hide();
+    QMainWindow::showEvent( ev );
 
-  if ( ui.showDictionaryBar->isChecked() != dictionaryBar.isVisible() )
-  {
-    ui.showDictionaryBar->setChecked( dictionaryBar.isVisible() );
-    updateDictionaryBar();
-  }
+    if ( groups.size() <= 1 ) // Only the default group? Hide then.
+        ui.groupList->hide();
+
+    if ( ui.showDictionaryBar->isChecked() != dictionaryBar.isVisible() )
+    {
+        ui.showDictionaryBar->setChecked( dictionaryBar.isVisible() );
+        updateDictionaryBar();
+    }
 }
 
 void ScanPopup::prefixMatchFinished()
 {
-  // Check that there's a window there at all
-  if ( isVisible() )
-  {
-    if ( wordFinder.getErrorString().size() )
+    // Check that there's a window there at all
+    if ( isVisible() )
     {
-      ui.queryError->setToolTip( wordFinder.getErrorString() );
-      ui.queryError->show();
-    }
-    else
-      ui.queryError->hide();
+        if ( wordFinder.getErrorString().size() )
+        {
+            ui.queryError->setToolTip( wordFinder.getErrorString() );
+            ui.queryError->show();
+        }
+        else
+            ui.queryError->hide();
 
-    ui.wordListButton->setVisible( wordFinder.getResults().size() );
-  }
+        ui.wordListButton->setVisible( wordFinder.getResults().size() );
+    }
 }
 
 void ScanPopup::on_wordListButton_clicked()
 {
-  if ( !isVisible() )
-    return;
+    if ( !isVisible() )
+        return;
 
-  WordFinder::SearchResults const & results = wordFinder.getResults();
+    WordFinder::SearchResults const & results = wordFinder.getResults();
 
-  if ( results.empty() )
-    return;
+    if ( results.empty() )
+        return;
 
-  QMenu menu( this );
+    QMenu menu( this );
 
-  unsigned total = results.size() < 40 ? results.size() : 40;
+    unsigned total = results.size() < 40 ? results.size() : 40;
 
-  for( unsigned x = 0; x < total; ++x )
-  {
-    // Some items are just too large! For now skip them.
-
-    if ( results[ x ].first.size() > 64 )
+    for( unsigned x = 0; x < total; ++x )
     {
-      if ( total < results.size() )
-        ++total;
+        // Some items are just too large! For now skip them.
+
+        if ( results[ x ].first.size() > 64 )
+        {
+            if ( total < results.size() )
+                ++total;
+        }
+        else
+            menu.addAction( results[ x ].first );
     }
-    else
-      menu.addAction( results[ x ].first );
-  }
 
-  connect( this, SIGNAL( closeMenu() ), &menu, SLOT( close() ) );
+    connect( this, SIGNAL( closeMenu() ), &menu, SLOT( close() ) );
 
-  QAction * result = menu.exec( mapToGlobal( ui.wordListButton->pos() ) +
+    QAction * result = menu.exec( mapToGlobal( ui.wordListButton->pos() ) +
                                   QPoint( 0, ui.wordListButton->height() ) );
 
-  if ( result )
-    definition->showDefinition( result->text(), ui.groupList->getCurrentGroup() );
+    if ( result )
+        definition->showDefinition( result->text(), ui.groupList->getCurrentGroup() );
 }
 
 void ScanPopup::on_pronounceButton_clicked()
 {
-  definition->playSound();
+    definition->playSound();
 }
 
 void ScanPopup::pinButtonClicked( bool checked )
 {
-  if ( checked )
-  {
-    uninterceptMouse();
+    if ( checked )
+    {
+        uninterceptMouse();
 
-    setWindowFlags( Qt::Dialog );
-    setWindowTitle( elideInputWord() );
-    dictionaryBar.setMovable( true );
-    hideTimer.stop();
-  }
-  else
-  {
-    dictionaryBar.setMovable( false );
-    setWindowFlags( popupWindowFlags );
+        setWindowFlags( Qt::Dialog );
+        setWindowTitle( elideInputWord() );
+        dictionaryBar.setMovable( true );
+        hideTimer.stop();
+    }
+    else
+    {
+        dictionaryBar.setMovable( false );
+        setWindowFlags( popupWindowFlags );
 
-    mouseEnteredOnce = true;
-  }
+        mouseEnteredOnce = true;
+    }
 
-  show();
+    show();
 }
 
 void ScanPopup::on_showDictionaryBar_clicked( bool checked )
 {
-  dictionaryBar.setVisible( checked );
-  updateDictionaryBar();
-  definition->updateMutedContents();
+    dictionaryBar.setVisible( checked );
+    updateDictionaryBar();
+    definition->updateMutedContents();
 }
 
 void ScanPopup::hideTimerExpired()
 {
-  if ( isVisible() )
-    hideWindow();
+    if ( isVisible() )
+        hideWindow();
 }
 
 void ScanPopup::altModeExpired()
 {
-  // The alt mode duration has expired, so there's no need to poll for modifiers
-  // anymore.
-  altModePollingTimer.stop();
+    // The alt mode duration has expired, so there's no need to poll for modifiers
+    // anymore.
+    altModePollingTimer.stop();
 }
 
 void ScanPopup::altModePoll()
 {
-  if ( !pendingInputWord.size() )
-  {
-    altModePollingTimer.stop();
-    altModeExpirationTimer.stop();
-  }
-  else
-  if ( checkModifiersPressed( cfg.preferences.scanPopupModifiers ) )
-  {
-    altModePollingTimer.stop();
-    altModeExpirationTimer.stop();
+    if ( !pendingInputWord.size() )
+    {
+        altModePollingTimer.stop();
+        altModeExpirationTimer.stop();
+    }
+    else
+        if ( checkModifiersPressed( cfg.preferences.scanPopupModifiers ) )
+        {
+            altModePollingTimer.stop();
+            altModeExpirationTimer.stop();
 
-    inputWord = pendingInputWord;
-    engagePopup( false );
-  }
+            inputWord = pendingInputWord;
+            engagePopup( false );
+        }
 }
 
 void ScanPopup::pageLoaded( ArticleView * )
 {
-  ui.pronounceButton->setVisible( definition->hasSound() );
+    ui.pronounceButton->setVisible( definition->hasSound() );
 
-  if ( cfg.preferences.pronounceOnLoadPopup )
-    definition->playSound();
+    if ( cfg.preferences.pronounceOnLoadPopup )
+        definition->playSound();
 }
 
 void ScanPopup::showStatusBarMessage( QString const & message, int timeout, QPixmap const & icon )
 {
-  mainStatusBar->showMessage( message, timeout, icon );
+    mainStatusBar->showMessage( message, timeout, icon );
 }
 
 void ScanPopup::escapePressed()
 {
-  if ( !definition->closeSearch() )
-    hideWindow();
+    if ( !definition->closeSearch() )
+        hideWindow();
 }
 
 void ScanPopup::hideWindow()
 {
-  uninterceptMouse();
+    uninterceptMouse();
 
-  emit closeMenu();
-  hideTimer.stop();
-  unsetCursor();
-  hide();
+    emit closeMenu();
+    hideTimer.stop();
+    unsetCursor();
+    hide();
 }
 
 void ScanPopup::interceptMouse()
 {
-  if ( !mouseIntercepted )
-  {
-    // We used to grab the mouse -- but this doesn't always work reliably
-    // (e.g. doesn't work at all in Windows 7 for some reason). Therefore
-    // we use a polling timer now.
+    if ( !mouseIntercepted )
+    {
+        // We used to grab the mouse -- but this doesn't always work reliably
+        // (e.g. doesn't work at all in Windows 7 for some reason). Therefore
+        // we use a polling timer now.
 
-//    grabMouse();
-    mouseGrabPollTimer.start();
+        //    grabMouse();
+        mouseGrabPollTimer.start();
 
-    qApp->installEventFilter( this );
+        qApp->installEventFilter( this );
 
-    mouseIntercepted = true;
-  }
+        mouseIntercepted = true;
+    }
 }
 
 void ScanPopup::mouseGrabPoll()
 {
-  if ( mouseIntercepted )
-    reactOnMouseMove( QCursor::pos() );
+    if ( mouseIntercepted )
+        reactOnMouseMove( QCursor::pos() );
 }
 
 void ScanPopup::uninterceptMouse()
 {
-  if ( mouseIntercepted )
-  {
-    qApp->removeEventFilter( this );
-    mouseGrabPollTimer.stop();
-//    releaseMouse();
+    if ( mouseIntercepted )
+    {
+        qApp->removeEventFilter( this );
+        mouseGrabPollTimer.stop();
+        //    releaseMouse();
 
-    mouseIntercepted = false;
-  }
+        mouseIntercepted = false;
+    }
 }
 
 void ScanPopup::updateDictionaryBar()
 {
-  if ( !dictionaryBar.toggleViewAction()->isChecked() )
-    return; // It's not enabled, therefore hidden -- don't waste time
+    if ( !dictionaryBar.toggleViewAction()->isChecked() )
+        return; // It's not enabled, therefore hidden -- don't waste time
 
-  unsigned currentId = ui.groupList->getCurrentGroup();
-  Instances::Group const * grp = groups.findGroup( currentId );
+    unsigned currentId = ui.groupList->getCurrentGroup();
+    Instances::Group const * grp = groups.findGroup( currentId );
 
-  if ( grp ) // Should always be !0, but check as a safeguard
-    dictionaryBar.setDictionaries( grp->dictionaries );
+    if ( grp ) // Should always be !0, but check as a safeguard
+        dictionaryBar.setDictionaries( grp->dictionaries );
 
-  if( currentId == Instances::Group::AllGroupId )
-    dictionaryBar.setMutedDictionaries( &cfg.popupMutedDictionaries );
-  else
-  {
-    Config::Group * grp = cfg.getGroup( currentId );
-    dictionaryBar.setMutedDictionaries( grp ? &grp->popupMutedDictionaries : 0 );
-  }
+    if( currentId == Instances::Group::AllGroupId )
+        dictionaryBar.setMutedDictionaries( &cfg.popupMutedDictionaries );
+    else
+    {
+        Config::Group * grp = cfg.getGroup( currentId );
+        dictionaryBar.setMutedDictionaries( grp ? &grp->popupMutedDictionaries : 0 );
+    }
 }
 
 void ScanPopup::mutedDictionariesChanged()
 {
-  if ( dictionaryBar.toggleViewAction()->isChecked() )
-    definition->updateMutedContents();
+    if ( dictionaryBar.toggleViewAction()->isChecked() )
+        definition->updateMutedContents();
 }
 
 void ScanPopup::on_sendWordButton_clicked()
 {
-  if ( !isVisible() )
-    return;
-  if( !ui.pinButton->isChecked() )
-  {
-    definition->closeSearch();
-    hideWindow();
-  }
-  emit sendWordToMainWindow( definition->getTitle() );
+    if ( !isVisible() )
+        return;
+    if( !ui.pinButton->isChecked() )
+    {
+        definition->closeSearch();
+        hideWindow();
+    }
+    emit sendWordToMainWindow( definition->getTitle() );
 }
 
 void ScanPopup::switchExpandOptionalPartsMode()
 {
-  if( isVisible() )
-    emit switchExpandMode();
+    if( isVisible() )
+        emit switchExpandMode();
 }

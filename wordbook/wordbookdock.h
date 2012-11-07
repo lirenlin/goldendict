@@ -20,6 +20,9 @@ public:
     explicit wordbookDock(QWidget *parent = 0);
     ~wordbookDock();
     bool addRecord(const QString &word);
+    bool removeRecord(const QString &word);
+    const bool &hasRecord(const QString &word) const;
+    bool hasRecord(const QString &word) ;
 
 private:
     Ui::wordbookDock *ui;

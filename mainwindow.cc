@@ -570,8 +570,10 @@ MainWindow::MainWindow( Config::Class & cfg_ ):
 void MainWindow::addToWordBook()
 {
     //QString currentWord = ArticleView::wordName;
-    if(!currentWord.isEmpty())
+    if(ui.actionAdd_to_wordbook->isChecked())
         wordbook->addRecord(currentWord);
+    else if(!currentWord.isEmpty())
+        wordbook->removeRecord(currentWord);
 }
 
 void MainWindow::ctrlTabPressed()
@@ -1209,6 +1211,10 @@ void MainWindow::titleChanged( ArticleView * view, QString const & title )
   escaped.replace( "&", "&&" );
   /// lirenlin
   currentWord = escaped;
+  if(wordbook->hasRecord(currentWord))
+      ui.actionAdd_to_wordbook->setChecked(true);
+  else
+      ui.actionAdd_to_wordbook->setChecked(false);
 
   ui.tabWidget->setTabText( ui.tabWidget->indexOf( view ), escaped );
   updateWindowTitle();

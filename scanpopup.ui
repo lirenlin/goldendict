@@ -85,17 +85,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="addToWordBook">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="resources.qrc">
-             <normaloff>:/icons/addtab.png</normaloff>:/icons/addtab.png</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QToolButton" name="pronounceButton">
            <property name="toolTip">
             <string>Pronounce Word (Alt+S)</string>
@@ -129,6 +118,21 @@
            </property>
            <property name="shortcut">
             <string>Alt+W</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addToWordBook">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources.qrc">
+             <normaloff>:/icons/expand_opt.png</normaloff>
+             <normalon>:/icons/collapse_opt.png</normalon>:/icons/expand_opt.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

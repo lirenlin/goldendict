@@ -97,6 +97,7 @@ private:
 
   /// lirenlin
   const wordbookDock *wordbook;
+  QString currentWord;
 
   Config::Class & cfg;
   bool isScanningEnabled;
@@ -148,6 +149,8 @@ private:
   QString elideInputWord();
 
 private slots:
+  /// lirenlin
+  void titleChanged( ArticleView *, QString const & ) ;
 
   void clipboardChanged( QClipboard::Mode );
   void mouseHovered( QString const & , bool forcePopup);
