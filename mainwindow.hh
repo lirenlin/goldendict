@@ -64,7 +64,8 @@ private:
   /// wordbook dock, lirenlin
   wordbookDock * wordbook;
   QString currentWord;
-  
+  bool translateLineFocus;
+
 
   /// This widget is used as a title bar for the searchPane dock, and
   /// incorporates the next three objects inside
@@ -187,6 +188,7 @@ private slots:
   void hotKeyActivated( int );
   /// lirenlin
   void addToWordBook();
+  void tabChanged(int);
 
   /// If new release checks are on, santizies the next check time and starts
   /// the timer. Does nothing otherwise.
