@@ -1,7 +1,6 @@
 #include "wordbookdock.h"
 #include "ui_wordbookdock.h"
 #include "database.h"
-#include "lineedit.h"
 
 #include <QSqlTableModel>
 #include <QCompleter>
@@ -171,10 +170,15 @@ void wordbookDock::toggleVisibility()
 bool wordbookDock::addRecord(const QString &word)
 {
     QSqlRecord tmp(model->record());
+    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchContains);
+    if(indexList.count() >= 1)
+        return false;
+
     dbInterface->generateRecord(tmp, word);
     bool re1 = model->insertRecord(model->rowCount(), tmp);
     bool re2 = model->submitAll();
     updateStatusLine();
+
     return (re1 && re2);
 
 }

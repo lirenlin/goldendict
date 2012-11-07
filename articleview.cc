@@ -68,6 +68,9 @@ AudioPlayer & AudioPlayer::instance()
 }
 
 
+/// lirenlin
+///QString ArticleView::wordName = "";
+
 ArticleView::ArticleView( QWidget * parent, ArticleNetworkAccessManager & nm,
                           std::vector< sptr< Dictionary::Class > > const & allDictionaries_,
                           Instances::Groups const & groups_, bool popupView_,
@@ -192,6 +195,8 @@ void ArticleView::showDefinition( QString const & word, unsigned group,
                                   QString const & scrollTo,
                                   Contexts const & contexts )
 {
+    /// lirenlin
+    ///wordName = word;
   QUrl req;
 
   req.setScheme( "gdlookup" );

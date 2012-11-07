@@ -19,6 +19,8 @@ class ArticleView: public QFrame
 {
   Q_OBJECT
 
+
+
   ArticleNetworkAccessManager & articleNetMgr;
   std::vector< sptr< Dictionary::Class > > const & allDictionaries;
   Instances::Groups const & groups;
@@ -53,6 +55,8 @@ class ArticleView: public QFrame
   GroupComboBox const * groupComboBox;
 
 public:
+  /// lirenlin
+  ///static QString wordName;
   /// The popupView flag influences contents of the context menus to be
   /// appropriate to the context of the view.
   /// The groups aren't copied -- rather than that, the reference is kept

@@ -569,6 +569,7 @@ MainWindow::MainWindow( Config::Class & cfg_ ):
 /// lirenlin
 void MainWindow::addToWordBook()
 {
+    //QString currentWord = ArticleView::wordName;
     if(!currentWord.isEmpty())
         wordbook->addRecord(currentWord);
 }
@@ -886,7 +887,7 @@ void MainWindow::makeScanPopup()
     return;
 
   scanPopup = new ScanPopup( 0, cfg, articleNetMgr, dictionaries, groupInstances,
-                             history );
+                             history, wordbook );
 
   scanPopup->setStyleSheet( styleSheet() );
 

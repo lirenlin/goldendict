@@ -15,6 +15,7 @@
 #include "history.hh"
 #include "dictionarybar.hh"
 #include "mainstatusbar.hh"
+#include "wordbookdock.h"
 
 /// This is a popup dialog to show translations when clipboard scanning mode
 /// is enabled.
@@ -29,7 +30,8 @@ public:
              ArticleNetworkAccessManager &,
              std::vector< sptr< Dictionary::Class > > const & allDictionaries,
              Instances::Groups const &,
-             History & );
+             History &,
+             const wordbookDock * wordbook_ = NULL); /// lirenlin
 
   ~ScanPopup();
   
@@ -76,6 +78,7 @@ public slots:
   void translateWordFromSelection();
   /// From the dictionary bar.
   void editGroupRequested();
+  void addToWordBook();
 
 private:
 
@@ -91,6 +94,9 @@ private:
   void uninterceptMouse();
 
   void updateDictionaryBar();
+
+  /// lirenlin
+  const wordbookDock *wordbook;
 
   Config::Class & cfg;
   bool isScanningEnabled;

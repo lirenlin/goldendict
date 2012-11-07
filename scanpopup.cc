@@ -32,13 +32,15 @@ ScanPopup::ScanPopup( QWidget * parent,
                       ArticleNetworkAccessManager & articleNetMgr,                      
                       std::vector< sptr< Dictionary::Class > > const & allDictionaries_,
                       Instances::Groups const & groups_,
-                      History & history_ ):
+                      History & history_,
+                      const wordbookDock *wordbook_):
   QMainWindow( parent ),
   cfg( cfg_ ),
   isScanningEnabled( false ),
   allDictionaries( allDictionaries_ ),
   groups( groups_ ),
   history( history_ ),
+  wordbook(wordbook_),
   escapeAction( this ),
   switchExpandModeAction( this ),
   wordFinder( this ),
@@ -57,6 +59,9 @@ ScanPopup::ScanPopup( QWidget * parent,
                                 groups, true, cfg,
                                 dictionaryBar.toggleViewAction()
                                 );
+
+  /// lirenlin
+  connect( ui.addToWordBook, SIGNAL(clicked()), this, SLOT(addToWordBook()));
 
   connect( this, SIGNAL(switchExpandMode() ),
            definition, SLOT( switchExpandOptionalParts() ) );
@@ -480,6 +485,12 @@ void ScanPopup::initiateTranslation()
   history.addItem( History::Item( ui.groupList->getCurrentGroup(),
                                   inputWord.trimmed() ) );
 //  history.save();
+}
+
+/// lirenlin
+void ScanPopup::addToWordBook()
+{
+  const_cast<wordbookDock *>(wordbook)->addRecord(inputWord);
 }
 
 vector< sptr< Dictionary::Class > > const & ScanPopup::getActiveDicts()

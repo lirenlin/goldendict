@@ -21,7 +21,7 @@ const QString dbInfo::sqlSelect =
 
 DB::DB(QObject *parent):QObject(parent)
 {
-    dbInfo::createConnection();
+    createConnection();
 }
 
 DB::~DB()
@@ -45,7 +45,15 @@ void DB::fillModel(QSqlTableModel * const model)
 
 void DB::generateRecord(QSqlRecord &record, const QString &word)
 {
-    record.setValue("name", QVariant(word));
+    /// do the name conversion, remove ending space and to lower case
+    QString wordName = word.toLower();
+    wordName = wordName.trimmed();
+    /*
+    while(wordName.endsWith(' '))
+        wordName.remove(wordName.size()-1, 1);
+        */
+
+    record.setValue("name", QVariant(wordName));
     record.setNull("mean");
     record.setValue("date", QVariant(QDate::currentDate().toString("yyyy-MM-dd")));
     record.setNull("dictName");
@@ -55,8 +63,11 @@ bool DB::addRow(QString name, QString mean, QString dictName)
 {
     /// do the name conversion, remove ending space and to lower case
     name = name.toLower();
+    name = name.trimmed();
+    /*
     while(name.endsWith(' '))
         name.remove(name.size()-1, 1);
+        */
 
     switch(ifExist(name, dictName))
     {
@@ -100,8 +111,11 @@ bool DB::addRow(QString name, QString mean, QString dictName)
 QString DB::dictName(QString name)
 {
     name = name.toLower();
+    name = name.trimmed();
+    /*
     while(name.endsWith(' '))
         name.remove(name.size()-1, 1);
+        */
 
     QString dictName = "";
     QString cmd = QString("SELECT dictName FROM word WHERE name=\'%1\'").arg(name);
@@ -132,7 +146,7 @@ DB::status DB::ifExist(QString name, QString dictName )
     if (!query.exec() || !query.first())
         qDebug() << query.lastError().text();
     else
-    {
+            {
         if(query.value(0) != 0) return EXIST;
         else return NO;
     }
@@ -161,7 +175,7 @@ void DB::removeRow(QString name)
     emit(dbChanged());
 }
 
-bool dbInfo::createConnection()
+bool DB::createConnection()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase(dbInfo::dbType);
     db.setDatabaseName(Config::getDBFileName());

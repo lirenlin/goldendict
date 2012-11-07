@@ -25,12 +25,14 @@ public:
 
 public slots:
     bool addRow(QString name, QString mean, QString dictName);
-    QString dictName(QString name);
-    void removeRow(QString name);
+    static bool createConnection();
     status ifExist(QString name, QString dictName = "");
 
+    QString dictName(QString name);
+    void removeRow(QString name);
+
 private:
-    bool update(QString name, QString mean, QString dictName);
+    static bool update(QString name, QString mean, QString dictName);
 
 signals:
     void dbChanged();
@@ -44,7 +46,6 @@ public:
     static const QString dbName;
     static const QString dbType;
     static const QString sqlSelect;
-    static bool createConnection();
 
 };
 

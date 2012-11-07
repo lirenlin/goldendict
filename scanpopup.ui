@@ -36,7 +36,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
-          <number>-1</number>
+          <number>6</number>
          </property>
          <item>
           <widget class="GroupComboBox" name="groupList"/>
@@ -81,6 +81,17 @@
            </property>
            <property name="shortcut">
             <string>Alt+M</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addToWordBook">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources.qrc">
+             <normaloff>:/icons/addtab.png</normaloff>:/icons/addtab.png</iconset>
            </property>
           </widget>
          </item>
