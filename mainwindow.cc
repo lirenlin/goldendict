@@ -575,7 +575,20 @@ MainWindow::MainWindow( Config::Class & cfg_ ):
   QList<QTabBar *> tabList = findChildren<QTabBar *>();
   if(!tabList.isEmpty()){
       foreach(QTabBar * tabBar, tabList)
+      {
           connect(tabBar, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+          /// make sure that searchPane is always on top
+          for(int index = 0; index < tabBar->count(); index++)
+          {
+              QString tabText = tabBar->tabText(index);
+              if(tabText == ui.searchPane->windowTitle())
+              {
+                  tabBar->setCurrentIndex(index);
+                  break;
+              }
+          }
+      }
+
   }
   translateLineFocus = false;
 }
