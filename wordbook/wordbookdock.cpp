@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QMenu>
 #include <QSqlRecord>
+#include <QKeyEvent>
 
 
 wordbookDock::wordbookDock(QWidget *parent) :
@@ -44,6 +45,8 @@ wordbookDock::wordbookDock(QWidget *parent) :
     ui->searchBox->setCompleter(completer);
     connect(ui->searchBox, SIGNAL(returnPressed()), this, SLOT(showSearchResult()));
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+F"), this);
+    //ui->searchBox->hide();
+    connect(shortcut, SIGNAL(activated()), ui->searchBox, SLOT(show()));
     connect(shortcut, SIGNAL(activated()), ui->searchBox, SLOT(setFocus()));
 
     updateStatusLine();
@@ -68,6 +71,23 @@ wordbookDock::wordbookDock(QWidget *parent) :
 wordbookDock::~wordbookDock()
 {
     delete ui;
+}
+
+void wordbookDock::activeWordBook()
+{
+    //activateWindow();
+    raise();
+    //ui->searchBox->setFocus();
+}
+
+bool wordbookDock::closeSearch()
+{
+    if(ui->searchBox->isVisible())
+    {
+        ui->searchBox->hide();
+        return true;
+    }
+    return false;
 }
 
 void wordbookDock::updateStatusLine()

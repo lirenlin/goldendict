@@ -23,6 +23,7 @@ public:
     bool removeRecord(const QString &word);
     const bool &hasRecord(const QString &word) const;
     bool hasRecord(const QString &word) ;
+    bool closeSearch();
 
 private:
     Ui::wordbookDock *ui;
@@ -41,6 +42,7 @@ private slots:
 
 public slots:
     void toggleVisibility();
+    void activeWordBook();
 
 };
 
