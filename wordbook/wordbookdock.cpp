@@ -172,11 +172,11 @@ void wordbookDock::selectionChanged(const QModelIndex &index)
     QModelIndex tmp = model->index(index.row(), 1);
     QString word = tmp.data(Qt::DisplayRole).toString();
 
-    if(word != preWord)
-    {
+    //if(word != preWord)
+    //{
         emit translate(word);
         preWord = word;
-    }
+    //}
 
 
 }
