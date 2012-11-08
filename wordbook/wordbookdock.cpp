@@ -229,6 +229,7 @@ bool wordbookDock::hasRecord(const QString &word)
     else return false;
 }
 
+/// @todo, add the db import and export support
 bool wordbookDock::importDB(const QString &file)
 {
 
