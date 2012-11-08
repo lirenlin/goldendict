@@ -180,10 +180,10 @@ void wordbookDock::selectionChanged(const QModelIndex &index)
 
 
 }
-void wordbookDock::toggleVisibility()
+void wordbookDock::toggleVisibility(bool checked)
 {
     //qDebug() << "toggle visibility";
-    if(isHidden()) show();
+    if(checked) show();
     else hide();
 }
 
@@ -227,4 +227,16 @@ bool wordbookDock::hasRecord(const QString &word)
     if(indexList.count() >= 1)
         return true;
     else return false;
+}
+
+bool wordbookDock::importDB(const QString &file)
+{
+
+
+}
+
+bool wordbookDock::exportDB(const QString &file)
+{
+
+
 }

@@ -125,7 +125,10 @@
      <string>Wordbook</string>
     </property>
     <addaction name="actionShow"/>
-    <addaction name="actionAdd_to_wordbook"/>
+    <addaction name="actionAddToWordBook"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport"/>
+    <addaction name="actionExport"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -441,6 +444,9 @@
    </property>
   </action>
   <action name="actionShow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Show</string>
    </property>
@@ -450,7 +456,7 @@
     <string>Hide</string>
    </property>
   </action>
-  <action name="actionAdd_to_wordbook">
+  <action name="actionAddToWordBook">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -461,6 +467,16 @@
    </property>
    <property name="text">
     <string>Add to wordbook</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="text">
+    <string>Import</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>Export</string>
    </property>
   </action>
  </widget>

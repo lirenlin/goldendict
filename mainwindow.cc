@@ -73,12 +73,14 @@ MainWindow::MainWindow( Config::Class & cfg_ ):
 
   ui.setupUi( this );
   /// new wordbookDock, lirenlin
+  ui.actionShow->setChecked(true);
   wordbook = new wordbookDock(this);
   connect(wordbook, SIGNAL(translate(QString)), this, SLOT(showTranslationFor(QString)));
-  connect(ui.actionShow, SIGNAL(triggered()),wordbook,SLOT(toggleVisibility()));
-  connect(ui.actionAdd_to_wordbook, SIGNAL(triggered()),this,SLOT(addToWordBook()));
+  connect(ui.actionShow, SIGNAL(toggled(bool)),wordbook,SLOT(toggleVisibility(bool)));
+  connect(ui.actionAddToWordBook, SIGNAL(triggered()),this,SLOT(addToWordBook()));
   QToolBar * WBToolBar = addToolBar( tr( "Add" ) );
-  WBToolBar->addAction( ui.actionAdd_to_wordbook );
+  WBToolBar->addAction( ui.actionAddToWordBook );
+  addDockWidget(Qt::LeftDockWidgetArea, wordbook);
   tabifyDockWidget(wordbook, ui.searchPane);
   ui.searchPane->raise();
   QShortcut *shortcut1 = new QShortcut(QKeySequence("Ctrl+S"), this);
@@ -571,7 +573,7 @@ MainWindow::MainWindow( Config::Class & cfg_ ):
 #ifdef Q_OS_WIN32
   gdAskMessage = RegisterWindowMessage( GD_MESSAGE_NAME );
 #endif
-  /// lirenlin
+  ///
   QList<QTabBar *> tabList = findChildren<QTabBar *>();
   if(!tabList.isEmpty()){
       foreach(QTabBar * tabBar, tabList)
@@ -596,14 +598,24 @@ MainWindow::MainWindow( Config::Class & cfg_ ):
 void MainWindow::addToWordBook()
 {
     //QString currentWord = ArticleView::wordName;
-    if(ui.actionAdd_to_wordbook->isChecked())
+    if(ui.actionAddToWordBook->isChecked())
         wordbook->addRecord(currentWord);
     else if(!currentWord.isEmpty())
         wordbook->removeRecord(currentWord);
 }
+/// change the icon text as needed
+void MainWindow::on_actionAddToWordBook_toggled(bool checked)
+{
+    if(checked)
+        ui.actionAddToWordBook->setText("remove from wordbook");
+    else
+        ui.actionAddToWordBook->setText("add to wordbook");
+
+}
+
 void MainWindow::tabChanged(int index)
 {
-    qDebug() << "XXXXXXXXXXXXXXXXXXXXXXXXXXx";
+    ///qDebug() << "XXXXXXXXXXXXXXXXXXXXXXXXXXx";
     ////@todo
     QList<QTabBar *> tabList = findChildren<QTabBar *>();
     if(!tabList.isEmpty()){
@@ -1265,9 +1277,9 @@ void MainWindow::titleChanged( ArticleView * view, QString const & title )
     /// lirenlin
     currentWord = escaped;
     if(wordbook->hasRecord(currentWord))
-        ui.actionAdd_to_wordbook->setChecked(true);
+        ui.actionAddToWordBook->setChecked(true);
     else
-        ui.actionAdd_to_wordbook->setChecked(false);
+        ui.actionAddToWordBook->setChecked(false);
 
     ui.tabWidget->setTabText( ui.tabWidget->indexOf( view ), escaped );
     updateWindowTitle();

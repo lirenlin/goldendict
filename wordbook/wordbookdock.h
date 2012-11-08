@@ -41,8 +41,10 @@ private slots:
     void updateStatusLine();
 
 public slots:
-    void toggleVisibility();
+    void toggleVisibility(bool);
     void activeWordBook();
+    bool importDB(const QString &file);
+    bool exportDB(const QString &file);
 
 };
 

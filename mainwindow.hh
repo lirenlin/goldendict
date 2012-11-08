@@ -189,6 +189,7 @@ private slots:
   /// lirenlin
   void addToWordBook();
   void tabChanged(int);
+  void on_actionAddToWordBook_toggled(bool);
 
   /// If new release checks are on, santizies the next check time and starts
   /// the timer. Does nothing otherwise.
