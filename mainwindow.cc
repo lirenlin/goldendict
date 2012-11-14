@@ -592,7 +592,7 @@ MainWindow::MainWindow( Config::Class & cfg_ ):
       }
 
   }
-  translateLineFocus = false;
+  translateLineFocus = true;
 }
 /// lirenlin
 void MainWindow::addToWordBook()

@@ -189,11 +189,13 @@ void wordbookDock::toggleVisibility(bool checked)
 
 bool wordbookDock::removeRecord(const QString &word)
 {
-    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchContains);
+    //QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchContains);
+    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchFixedString);
     if(indexList.count() == 1)
     {
         model->removeRow(indexList.first().row());
         model->submitAll();
+        updateStatusLine();
         return true;
     }
     return false;
@@ -215,7 +217,8 @@ bool wordbookDock::addRecord(const QString &word)
 
 const bool &wordbookDock::hasRecord(const QString &word) const
 {
-    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchContains);
+    //QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchContains);
+    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchFixedString);
     if(indexList.count() >= 1)
         return true;
     else return false;
@@ -223,7 +226,8 @@ const bool &wordbookDock::hasRecord(const QString &word) const
 
 bool wordbookDock::hasRecord(const QString &word)
 {
-    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchContains);
+    //QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchContains);
+    QModelIndexList indexList = model->match(model->index(0,1), Qt::DisplayRole, word, -1, Qt::MatchFixedString);
     if(indexList.count() >= 1)
         return true;
     else return false;
